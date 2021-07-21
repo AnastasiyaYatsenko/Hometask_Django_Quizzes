@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{form.errors}}
+    <article class="blog-post">
+            {% for q in answers %}
+             <p>{{q.question_content}}</p>
+             <textarea name=answer_{{q.number}}>{{q.answer}}</textarea>
+            {% endfor %}
+        <p><input type="submit" value="Submit"></p>
+    </article>
+</form>
+{% endblock %}

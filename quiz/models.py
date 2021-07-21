@@ -3,14 +3,14 @@ from django.shortcuts import render
 
 
 class Question(models.Model):
-    content = models.CharField(max_length=255)
+    content = models.TextField(default="")
 
     def __str__(self):
         return self.content
 
 
 class Test(models.Model):
-    title = models.CharField(max_length=100, unique=True)
+    title = models.CharField(max_length=100)
     description = models.TextField()
     questions = models.ManyToManyField('Question', through='TestQuestion')
 
@@ -30,3 +30,27 @@ class TestQuestion(models.Model):
     class Meta:
         ordering = [
          '-number']
+
+
+class Testrun(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    answers = models.ManyToManyField('Question', through='AnswerQuestion')
+
+    class Meta:
+        ordering = [
+         '-test']
+
+    def __str__(self):
+        return self.test
+
+
+class AnswerQuestion(models.Model):
+    testrun = models.ForeignKey(Testrun, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question_content = models.TextField(default="")
+    number = models.IntegerField()
+    answer = models.TextField(default="")
+
+    class Meta:
+        ordering = [
+         'number']

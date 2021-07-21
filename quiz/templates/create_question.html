@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{form.errors}}
+    <article class="blog-post">
+        <textarea name=content></textarea>
+        <p><input type="submit" value="Submit"></p>
+    </article>
+</form>
+{% endblock %}

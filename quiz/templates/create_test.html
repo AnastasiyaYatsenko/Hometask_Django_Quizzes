@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{form.errors}}
+    <article class="blog-post">
+          <input type=text name=title maxlength="100">
+          <p><textarea name=description></textarea></p>
+          <p><select multiple="multiple" name="questions">
+            {% for q in questions %}
+            <option value={{q.pk}}>{{ q.content }}</option>
+            {% endfor %}
+        </select></p>
+        <p><a class="btn btn-outline-primary" href="/add_question">Add question</a></p>
+        <p><input type="submit" value="Submit"></p>
+    </article>
+</form>
+{% endblock %}

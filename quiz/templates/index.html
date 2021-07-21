@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  {% for test in test_list %}
+      <article class="blog-post">
+          <h3 class="blog-post-title">{{ test.title }}</h3>
+          <p> {{test.description}}</p>
+          <p><a class="btn btn-sm btn-outline-secondary" href="/run_{{test.pk}}">Run</a></p>
+      </article>
+  {% endfor %}
+{% endblock %}
