@@ -1,7 +1,9 @@
+import datetime
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from quiz.models import Test, Question, TestQuestion, Testrun, AnswerQuestion
-from quiz.forms import TestForm, CreateTestForm, CreateTestrunForm, CreateQuestionForm
+from quiz.forms import TestForm, CreateTestForm, CreateTestrunForm, CreateQuestionForm, SearchForm, FilterForm
 from django import forms
 from django.forms import ValidationError
 from django.views import View
@@ -45,10 +47,8 @@ class CreateQuestionView(CreateView):
 
     def post(self, request, **kwargs):
         form = CreateQuestionForm()
-        pprint(form.data)
         content = request.POST.get('content')
         if len(content) > 1:
-            pprint(form.data)
             q = Question(content=content)
             q.save()
             return redirect('/add')
@@ -107,7 +107,6 @@ class CreateTestrunView(CreateView):
     def post(self, request, *args, **kwargs):
         form = CreateTestrunForm()
         context = self.get_context_data(**kwargs)
-        pprint(form.data)
         global current_testrun
         test = context['test']
         answers = context['questions']
@@ -118,10 +117,46 @@ class CreateTestrunView(CreateView):
                                                 question=question).number
             test_answer = AnswerQuestion.objects.get(testrun=tr,
                                                      question=question)
-            pprint(request.POST.get('answer_'+str(q_number)))
             test_answer.answer = request.POST.get('answer_'+str(q_number))
             test_answer.save()
         return redirect('/')
 
     def get_queryset(self):
         return Testrun.objects.filter(test=self.request.resolver_match.kwargs['test_id']).order_by('-id')
+
+
+class SearchTestView(CreateView):
+    def get(self, request, **kwargs):
+        form = SearchForm()
+        return render(request, 'search.html')
+
+    def post(self, request, **kwargs):
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            test = Test.objects.get(title=form.cleaned_data['title'])
+            test_id = test.pk
+            return redirect('/run_'+str(test_id))
+        else:
+            return render(request, 'search.html')
+
+
+class FilterTestView(CreateView):
+    def get(self, request, **kwargs):
+        form = FilterForm()
+        return render(request, 'filter.html')
+
+    def post(self, request, **kwargs):
+        form = FilterForm(request.POST)
+        if form.is_valid():
+            first = form.cleaned_data['first_date']
+            second = form.cleaned_data['second_date']
+            if form.cleaned_data['sorting'] == "asc":
+                test_list = Test.objects.filter(created_at__gte=first).filter(created_at__lte=second).order_by(
+                    'created_at')
+            else:
+                test_list = Test.objects.filter(created_at__gte=first).filter(created_at__lte=second).order_by(
+                    '-created_at')
+            context = {'test_list': test_list}
+            return render(request, 'index.html', context=context)
+        else:
+            return render(request, 'filter.html')

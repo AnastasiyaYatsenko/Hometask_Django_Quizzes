@@ -1,6 +1,7 @@
 from quiz.models import Test, Question, TestQuestion, Testrun, AnswerQuestion
 from django import forms
 
+
 class TestForm(forms.Form):
     title = forms.CharField(min_length=5)
     description = forms.CharField(max_length=100)
@@ -28,4 +29,13 @@ class CreateQuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['content']
-    #content = forms.TextInput()
+
+
+class SearchForm(forms.Form):
+    title = forms.CharField(min_length=5)
+
+
+class FilterForm(forms.Form):
+    first_date = forms.DateTimeField()
+    second_date = forms.DateTimeField()
+    sorting = forms.CharField()

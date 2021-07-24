@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import render
+from datetime import datetime
 
 
 class Question(models.Model):
@@ -13,6 +14,7 @@ class Test(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     questions = models.ManyToManyField('Question', through='TestQuestion')
+    created_at = models.DateTimeField(default=datetime.now())
 
     class Meta:
         ordering = [
