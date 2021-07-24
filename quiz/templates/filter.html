@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{form.errors}}
+    <article class="blog-post">
+          <input type="datetime-local" name=first_date>
+          <input type="datetime-local" name=second_date>
+          <p><select name="sorting">
+              <option value="asc">Older first</option>
+              <option value="desc">Newer first</option>
+        </select></p>
+        <p><input type="submit" value="Submit"></p>
+    </article>
+</form>
+{% endblock %}
