@@ -1,15 +1,10 @@
-import datetime
-
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from quiz.models import Test, Question, TestQuestion, Testrun, AnswerQuestion
+from quiz.models import Test, Question, TestQuestion, Testrun, AnswerQuestion, TestrunStat
 from quiz.forms import TestForm, CreateTestForm, CreateTestrunForm, CreateQuestionForm, SearchForm, FilterForm
-from django import forms
-from django.forms import ValidationError
-from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView
+import logging
 
-from pprint import pprint
+logger = logging.getLogger(__name__)
 
 
 class CreateTestView(CreateView):
@@ -85,6 +80,8 @@ class CreateTestrunView(CreateView):
         if not test_queryset:
             tr = Testrun(test=context['test'])
             tr.save()
+            ts = TestrunStat(testrun=tr, test_name=context['test'].title)
+            ts.save()
             is_retested = False
         else:
             tr = self.get_queryset()[0]
@@ -111,14 +108,25 @@ class CreateTestrunView(CreateView):
         test = context['test']
         answers = context['questions']
         tr = Testrun.objects.get(pk=current_testrun)
+        ts = TestrunStat.objects.get(testrun=tr)
+        ts.total_runs += 1
+        is_full = True
         for q in answers:
             question = Question.objects.get(pk=q['id'])
             q_number = TestQuestion.objects.get(test=context['test'],
                                                 question=question).number
             test_answer = AnswerQuestion.objects.get(testrun=tr,
                                                      question=question)
-            test_answer.answer = request.POST.get('answer_'+str(q_number))
+            str_answer = request.POST.get('answer_'+str(q_number))
+            test_answer.answer = str_answer
             test_answer.save()
+            if str_answer == "" and is_full:
+                is_full = False
+        if is_full:
+            ts.full_answer += 1
+        p = int((float(ts.full_answer)/float(ts.total_runs))*100)
+        ts.percentage = p
+        ts.save()
         return redirect('/')
 
     def get_queryset(self):

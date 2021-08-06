@@ -7,7 +7,7 @@ class Question(models.Model):
     content = models.TextField(default="")
 
     def __str__(self):
-        return self.content
+        return self.content or ''
 
 
 class Test(models.Model):
@@ -21,7 +21,7 @@ class Test(models.Model):
          '-title']
 
     def __str__(self):
-        return self.title
+        return self.title or ''
 
 
 class TestQuestion(models.Model):
@@ -42,9 +42,6 @@ class Testrun(models.Model):
         ordering = [
          '-test']
 
-    def __str__(self):
-        return self.test
-
 
 class AnswerQuestion(models.Model):
     testrun = models.ForeignKey(Testrun, on_delete=models.CASCADE)
@@ -56,3 +53,15 @@ class AnswerQuestion(models.Model):
     class Meta:
         ordering = [
          'number']
+
+
+class TestrunStat(models.Model):
+    testrun = models.ForeignKey(Testrun, on_delete=models.CASCADE)
+    test_name = models.TextField(default="")
+    full_answer = models.IntegerField(default=0)
+    total_runs = models.IntegerField(default=0)
+    percentage = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = [
+         'total_runs']
