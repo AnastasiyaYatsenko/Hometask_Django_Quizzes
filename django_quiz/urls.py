@@ -9,7 +9,10 @@ urlpatterns = [
     path('add', views.CreateTestView.as_view(), name='create_test'),
     path('add_question', views.CreateQuestionView.as_view(), name='create_question'),
     path('search', views.SearchTestView.as_view(), name='search'),
-    path('filter', views.FilterTestView.as_view(), name='run_test'),
+    path('filter', views.FilterTestView.as_view(), name='filter'),
     path('run_<test_id>', views.CreateTestrunView.as_view(), name='run_test'),
+    path('login', views.login_view, name='login'),
+    path('logout', views.logout_view, name='logout'),
+    path('register', views.register_view, name='register'),
     path('admin/', admin.site.urls)
 ]

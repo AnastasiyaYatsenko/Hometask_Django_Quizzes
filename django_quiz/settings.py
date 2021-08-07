@@ -55,7 +55,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
 ROOT_URLCONF = 'django_quiz.urls'
+
+STATIC_ROOT = 'assets'
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+SESSION_COOKIE_AGE = 3600
 
 TEMPLATES = [
     {
