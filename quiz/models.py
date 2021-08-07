@@ -1,6 +1,7 @@
 from django.db import models
 from django.shortcuts import render
 from datetime import datetime
+from django.contrib.auth.models import User
 
 
 class Question(models.Model):
@@ -37,6 +38,7 @@ class TestQuestion(models.Model):
 class Testrun(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     answers = models.ManyToManyField('Question', through='AnswerQuestion')
+    user = models.CharField(max_length=120, default="")
 
     class Meta:
         ordering = [

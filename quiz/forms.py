@@ -39,3 +39,24 @@ class FilterForm(forms.Form):
     first_date = forms.DateTimeField()
     second_date = forms.DateTimeField()
     sorting = forms.CharField()
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=120)
+    password = forms.CharField(max_length=120,
+                               widget=forms.PasswordInput)
+
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(max_length=120)
+    password = forms.CharField(max_length=120,
+                               widget=forms.PasswordInput)
+    confirm = forms.CharField(max_length=120,
+                              widget=forms.PasswordInput)
+
+    def clean(self):
+        password = self.cleaned_data['password']
+        confirm = self.cleaned_data['confirm']
+        if password != confirm:
+            raise forms.ValidationError('Passwords are not equal')
+        return self.cleaned_data

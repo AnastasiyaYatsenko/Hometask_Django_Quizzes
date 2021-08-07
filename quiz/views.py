@@ -1,13 +1,18 @@
 from django.shortcuts import render, redirect
 from quiz.models import Test, Question, TestQuestion, Testrun, AnswerQuestion, TestrunStat
-from quiz.forms import TestForm, CreateTestForm, CreateTestrunForm, CreateQuestionForm, SearchForm, FilterForm
+from quiz.forms import TestForm, CreateTestForm, CreateTestrunForm, CreateQuestionForm, SearchForm, FilterForm, LoginForm, RegisterForm
 from django.views.generic import ListView, CreateView
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class CreateTestView(CreateView):
+class CreateTestView(LoginRequiredMixin, CreateView):
+    login_url = '/login'
+
     def get(self, request, **kwargs):
         form = CreateTestForm()
         context = {
@@ -60,8 +65,9 @@ class TestListView(ListView):
         return Test.objects.all()
 
 
-class CreateTestrunView(CreateView):
+class CreateTestrunView(LoginRequiredMixin, CreateView):
     current_testrun = 0
+    login_url = '/login'
 
     def get_context_data(self, **kwargs):
         test_id = self.kwargs['test_id']
@@ -78,7 +84,7 @@ class CreateTestrunView(CreateView):
         test_queryset = self.get_queryset()
         is_retested = True
         if not test_queryset:
-            tr = Testrun(test=context['test'])
+            tr = Testrun(test=context['test'], user=self.request.user.username)
             tr.save()
             ts = TestrunStat(testrun=tr, test_name=context['test'].title)
             ts.save()
@@ -130,7 +136,8 @@ class CreateTestrunView(CreateView):
         return redirect('/')
 
     def get_queryset(self):
-        return Testrun.objects.filter(test=self.request.resolver_match.kwargs['test_id']).order_by('-id')
+        return Testrun.objects.filter(test=self.request.resolver_match.kwargs['test_id'],
+                                      user=self.request.user.username).order_by('-id')
 
 
 class SearchTestView(CreateView):
@@ -168,3 +175,40 @@ class FilterTestView(CreateView):
             return render(request, 'index.html', context=context)
         else:
             return render(request, 'filter.html')
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['username'],
+                                password=form.cleaned_data['password'])
+            if user is not None and user.is_active:
+                login(request, user)
+                return redirect('/')
+        else:
+            return render(request, 'login.html', {'form': form})
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/login')
+
+
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = User.objects.create_user(username=username, password=password)
+            login(request, user)
+            return redirect('/')
+        else:
+            return render(request, 'registration.html', {'form': form})
+    else:
+        form = RegisterForm()
+    return render(request, 'registration.html', {'form': form})
