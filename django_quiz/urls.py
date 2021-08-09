@@ -6,6 +6,7 @@ app_name = 'quiz'
 
 urlpatterns = [
     path('', views.TestListView.as_view(), name='index'),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('add', views.CreateTestView.as_view(), name='create_test'),
     path('add_question', views.CreateQuestionView.as_view(), name='create_question'),
     path('search', views.SearchTestView.as_view(), name='search'),
