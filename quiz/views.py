@@ -5,6 +5,8 @@ from django.views.generic import ListView, CreateView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 import logging
 
 logger = logging.getLogger(__name__)
@@ -56,6 +58,7 @@ class CreateQuestionView(CreateView):
             return render(request, 'create_question.html')
 
 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class TestListView(ListView):
     model = Test
     template_name = 'index.html'
