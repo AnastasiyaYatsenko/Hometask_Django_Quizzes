@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block content %}
   <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <p><input type="submit" value="Login"></p>
+    {% trans "Login" as login_text%}
+    <p><input type="submit" value="{{ login_text }}"></p>
   </form>
 {% endblock %}

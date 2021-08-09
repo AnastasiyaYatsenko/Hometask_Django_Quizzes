@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block content %}
+  <h1 class="pb-4 mb-4 fst-italic border-bottom">{% trans "Test list"%}</h1>
   {% for test in test_list %}
       <article class="blog-post">
           <h3 class="blog-post-title">{{ test.title }}</h3>
           <p> {{test.description}}</p>
-          <p><a class="btn btn-sm btn-outline-secondary" href="/run_{{test.pk}}">Run</a></p>
+          <p><a class="btn btn-sm btn-outline-secondary" href="/run_{{test.pk}}">{% trans "Run"%}</a></p>
       </article>
   {% endfor %}
 {% endblock %}

@@ -1,11 +1,13 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block content %}
 <form method="post">
     {% csrf_token %}
     {{form.errors}}
     <article class="blog-post">
         <textarea name=content></textarea>
-        <p><input type="submit" value="Submit"></p>
+        {% trans "Submit" as submit_text%}
+        <p><input type="submit" value="{{ submit_text }}"></p>
     </article>
 </form>
 {% endblock %}
