@@ -87,8 +87,11 @@ class CreateTestrunView(LoginRequiredMixin, CreateView):
         test_queryset = self.get_queryset()
         is_retested = True
         if not test_queryset:
-            tr = Testrun(test=context['test'], user=self.request.user.username)
+            test = context['test']
+            tr = Testrun(test=test, user=self.request.user.username)
             tr.save()
+            test.total_users += 1
+            test.save()
             ts = TestrunStat(testrun=tr, test_name=context['test'].title)
             ts.save()
             is_retested = False

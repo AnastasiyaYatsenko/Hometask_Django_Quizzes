@@ -16,6 +16,7 @@ class Test(models.Model):
     description = models.TextField()
     questions = models.ManyToManyField('Question', through='TestQuestion')
     created_at = models.DateTimeField(default=datetime.now())
+    total_users = models.IntegerField(default=0)
 
     class Meta:
         ordering = [
