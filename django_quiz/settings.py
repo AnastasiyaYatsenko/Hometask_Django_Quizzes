@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+from datetime import timedelta
 
 from celery.schedules import crontab
 import django.db
@@ -44,6 +45,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'rest_framework',
     'drf_yasg',
+    'rest_framework_simplejwt',
+    'django_filters',
     'quiz',
 ]
 
@@ -199,5 +202,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DATETIME_FORMAT': "%Y/%m/%d %H:%M:%S",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',)	,
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
 }
 
