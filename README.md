@@ -20,3 +20,8 @@
 Один тест можно пройти много раз.
 При прохождении теста на каждый вопрос должен быть
 сохранен ответ.
+
+
+# Запуск с Docker
+docker build -t light-it-docker .
+docker run --name light-it-docker -p 8000:8000 light-it-docker
