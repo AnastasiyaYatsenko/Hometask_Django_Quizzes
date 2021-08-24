@@ -22,6 +22,6 @@
 сохранен ответ.
 
 
-# Запуск с Docker
+## Запуск с Docker
 docker build -t light-it-docker .  
 docker run --name light-it-docker -p 8000:8000 light-it-docker
