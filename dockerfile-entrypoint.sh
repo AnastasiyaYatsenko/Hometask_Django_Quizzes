@@ -1,5 +1,4 @@
 #!/bin/sh
-redis-server --daemonize yes
 echo "Database migration"
 python3 ./manage.py migrate
 echo "Start celery worker"
