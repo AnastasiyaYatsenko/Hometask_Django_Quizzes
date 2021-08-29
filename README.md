@@ -25,3 +25,7 @@
 ## Запуск с Docker
 docker build -t light-it-docker .  
 docker run --name light-it-docker -p 8000:8000 light-it-docker
+
+## Запуск с docker-compose
+docker-compose build  
+docker-compose up  
